@@ -2923,9 +2923,9 @@ class app(Frame):
     def injectIT(self,*args):
         if (os.name == "posix"):
             #cmd = "YourFavoriteTerminal -h -e python sqlmap.py %s" % (self.sqlEdit.get())
-            cmd = "sakura -h -e python2 sqlmap.py %s" % (self.sqlEdit.get())
+            cmd = "sakura -h -e \"python2 sqlmap.py %s\"" % (self.sqlEdit.get())
         else:
-            cmd = "start cmd /k sqlmap.py %s" % (self.sqlEdit.get())
+            cmd = "start cmd /k \"sqlmap.py %s\"" % (self.sqlEdit.get().replace('&', '^&'))
         #Write last target [last 50 test]
 
         mode = os.O_TRUNC | os.O_WRONLY

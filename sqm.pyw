@@ -668,7 +668,7 @@ class app(Frame):
                             offvalue = "off", command= self.chekCast)
         self.chkCast.grid(row=0,column=2,sticky = 'w')
         #-Tamper:
-        self.Ltamper=Listbox(tampersLF,height=8,width=25,selectmode=EXTENDED)
+        self.Ltamper=Listbox(tampersLF,height=8,width=25,selectmode=EXTENDED,exportselection=0)
         # *.py in listbox, exclude __init__.py
         files_tamper = os.listdir('./tamper')
         tampers = filter(lambda x: x.endswith('.py'), files_tamper)

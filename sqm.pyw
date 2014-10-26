@@ -2890,7 +2890,7 @@ class app(Frame):
                 return param
 
             def parsep(param):
-                match = re.match(r'^(\s*)(\-.+?)(?:(=\s*|\s+)(\b.+?))?(\s*)$', param)
+                match = re.match(r'^(\s*)(\-.+?)(?:(=\s*|\s+)(\S.*?))?(\s*)$', param)
                 if match:
                     param = '%s%s%s%s%s' % (match.group(1), match.group(2), match.group(3) or '', quote(match.group(4) or ''), match.group(5))
                 else:

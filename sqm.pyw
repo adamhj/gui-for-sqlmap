@@ -2881,7 +2881,7 @@ class app(Frame):
             target = ' -c %s' % (tag)
         #
         try:
-            def quote(param):
+            def quote_param(param):
                 param = param.strip();
                 if re.search(r'[\"\$`\\%<\|>&\s]', param):
                     if os.name == 'posix':
@@ -2889,52 +2889,48 @@ class app(Frame):
                     param = '"%s"' % param
                 return param
 
-            def parsep(param):
+            def parse_and_quote_param(param):
                 match = re.match(r'^(\s*)(\-.+?)(?:(=\s*|\s+)(\S.*?))?(\s*)$', param)
                 if match:
-                    param = '%s%s%s%s%s' % (match.group(1), match.group(2), match.group(3) or '', quote(match.group(4) or ''), match.group(5))
+                    param = '%s%s%s%s%s' % (
+                    match.group(1), match.group(2), match.group(3) or '', quote_param(match.group(4) or ''),
+                    match.group(5))
                 else:
                     match = re.match(r'^(\s*)(\b.+?\b)(\s*)$', param)
                     if match:
-                        param = '%s%s%s' % (match.group(1), quote(match.group(2)), match.group(3))
+                        param = '%s%s%s' % (match.group(1), quote_param(match.group(2)), match.group(3))
                     elif param:
                         print 'Waring: unmatching parameter "%s"!' % param
                 return param
 
-            inject = parsep(target)+parsep(self.chekParam())+parsep(self.chek_tam())+ \
-                parsep(self.readWFILE())+parsep(self.fDFILE())+parsep(self.rMSFPATH())+ \
-                parsep(self.fOSCMD())+parsep(self.fShell())+parsep(self.fPWN())+parsep(self.fSmbrelay())+parsep(self.fBOF())+ \
-                parsep(self.fPrivEsc())+parsep(self.fTMPPATH())+parsep(self.chekFile())+parsep(self.fOutDir())+ \
-                parsep(self.fRegRead())+parsep(self.fRegAdd())+parsep(self.fRegDel())+parsep(self.fREGKEY())+ \
-                parsep(self.fREGVAL())+parsep(self.fREGDATA())+parsep(self.fREGTYPE())+parsep(self.chekQuery())+ \
-                parsep(self.chekdata())+parsep(self.fPDEL())+parsep(self.fRandomAg())+parsep(self.fPROXY())+ \
-                parsep(self.fPCRED())+parsep(self.fPignore())+parsep(self.chek_level())+parsep(self.chek_risk())+ \
-                parsep(self.chekTit())+parsep(self.chekHex())+parsep(self.chekTxt())+parsep(self.chekCode())+ \
-                parsep(self.chekReg())+parsep(self.chekStr())+parsep(self.chekSec())+parsep(self.chek_tech())+ \
-                parsep(self.chekDNS())+parsep(self.chekOpt())+parsep(self.fO())+parsep(self.chekPred())+parsep(self.chekKeep())+ \
-                parsep(self.chekNull())+parsep(self.chek_thr())+parsep(self.chek_dbms())+parsep(self.chekCol())+ \
-                parsep(self.chekChar())+parsep(self.chekCook())+ parsep(self.readLoadCookies())+ \
-                parsep(self.fCookieUrlencode())+parsep(self.fDropSetCookie())+parsep(self.chekPrefix())+ \
-                parsep(self.fUA())+parsep(self.fRandomize())+parsep(self.fForceSsl())+parsep(self.fHost())+parsep(self.fReferer())+ \
-                parsep(self.fHeaders())+parsep(self.fACERT())+parsep(self.fACRED())+parsep(self.fATYPE())+ \
-                parsep(self.fDELAY())+parsep(self.fTIMEOUT())+parsep(self.fRETRIES())+parsep(self.fSCOPE())+ \
-                parsep(self.fSAFURL())+parsep(self.fSAFREQ())+parsep(self.fSkipUrlencode())+parsep(self.fEVALCODE())+ \
-                parsep(self.chekSuffix())+parsep(self.chekOS())+parsep(self.chekSkip())+parsep(self.chekBigNum())+parsep(self.chekLogical())+ \
-                parsep(self.chekCast())+parsep(self.chekBatch())+parsep(self.chekCurrent_user())+parsep(self.chekCurrent_db())+ \
-                parsep(self.chek_is_dba())+parsep(self.chek_users())+parsep(self.chek_passwords())+parsep(self.fDCRED())+ \
-                parsep(self.chek_privileges())+parsep(self.chek_roles())+parsep(self.chek_dbs())+parsep(self.chekBFt())+parsep(self.chekBFc())+ \
-                parsep(self.chek_tables())+parsep(self.chek_columns())+parsep(self.chek_schema())+ \
-                parsep(self.chek_count())+parsep(self.chek_dump())+parsep(self.chek_dump_all())+ \
-                parsep(self.chek_search())+parsep(self.chekD())+parsep(self.chekT())+parsep(self.chekC())+parsep(self.fUSER())+ \
-                parsep(self.chek_exclude())+parsep(self.chek_start_stop())+parsep(self.chek_first())+ \
-                parsep(self.chek_last())+parsep(self.chek_verb())+parsep(self.fSqlShell())+parsep(self.fDLike())+parsep(self.fDHash())+ \
-                parsep(self.chekFing())+parsep(self.chekBanner())+parsep(self.fTor())+parsep(self.fTorUse())+ \
-                parsep(self.fTorPort())+parsep(self.fTorType())+parsep(self.fEta())+parsep(self.fForms())+ \
-                parsep(self.fFresh())+parsep(self.fParseEr())+parsep(self.fFlush())+parsep(self.fCharset())+ \
-                parsep(self.fCrawl())+parsep(self.fCsv())+parsep(self.fReplicate())+ parsep(self.fTrafFile())+ \
-                parsep(self.fSesFile())+parsep(self.fSave())+parsep(self.fBeep())+parsep(self.fPayload())+ \
-                parsep(self.fWaf())+parsep(self.fCleanup())+parsep(self.fDependencies())+parsep(self.fGpage())+parsep(self.fTSTF())+ \
-                parsep(self.fExact())+parsep(self.fMobile())+parsep(self.fRank())+parsep(self.fPurge())+parsep(self.fSmart())
+            inject = ''.join([parse_and_quote_param(p) for p in (
+                target, self.chekParam(), self.chek_tam(), self.readWFILE(), self.fDFILE(), self.rMSFPATH(),
+                self.fOSCMD(), self.fShell(), self.fPWN(), self.fSmbrelay(), self.fBOF(), self.fPrivEsc(),
+                self.fTMPPATH(), self.chekFile(), self.fOutDir(), self.fRegRead(), self.fRegAdd(), self.fRegDel(),
+                self.fREGKEY(), self.fREGVAL(), self.fREGDATA(), self.fREGTYPE(), self.chekQuery(), self.chekdata(),
+                self.fPDEL(), self.fRandomAg(), self.fPROXY(), self.fPCRED(), self.fPignore(), self.chek_level(),
+                self.chek_risk(), self.chekTit(), self.chekHex(), self.chekTxt(), self.chekCode(), self.chekReg(),
+                self.chekStr(), self.chekSec(), self.chek_tech(), self.chekDNS(), self.chekOpt(), self.fO(),
+                self.chekPred(), self.chekKeep(), self.chekNull(), self.chek_thr(), self.chek_dbms(), self.chekCol(),
+                self.chekChar(), self.chekCook(), self.readLoadCookies(), self.fCookieUrlencode(),
+                self.fDropSetCookie(), self.chekPrefix(), self.fUA(), self.fRandomize(), self.fForceSsl(), self.fHost(),
+                self.fReferer(), self.fHeaders(), self.fACERT(), self.fACRED(), self.fATYPE(), self.fDELAY(),
+                self.fTIMEOUT(), self.fRETRIES(), self.fSCOPE(), self.fSAFURL(), self.fSAFREQ(), self.fSkipUrlencode(),
+                self.fEVALCODE(), self.chekSuffix(), self.chekOS(), self.chekSkip(), self.chekBigNum(),
+                self.chekLogical(), self.chekCast(), self.chekBatch(), self.chekCurrent_user(), self.chekCurrent_db(),
+                self.chek_is_dba(), self.chek_users(), self.chek_passwords(), self.fDCRED(), self.chek_privileges(),
+                self.chek_roles(), self.chek_dbs(), self.chekBFt(), self.chekBFc(), self.chek_tables(),
+                self.chek_columns(), self.chek_schema(), self.chek_count(), self.chek_dump(), self.chek_dump_all(),
+                self.chek_search(), self.chekD(), self.chekT(), self.chekC(), self.fUSER(), self.chek_exclude(),
+                self.chek_start_stop(), self.chek_first(), self.chek_last(), self.chek_verb(), self.fSqlShell(),
+                self.fDLike(), self.fDHash(), self.chekFing(), self.chekBanner(), self.fTor(), self.fTorUse(),
+                self.fTorPort(), self.fTorType(), self.fEta(), self.fForms(), self.fFresh(), self.fParseEr(),
+                self.fFlush(), self.fCharset(), self.fCrawl(), self.fCsv(), self.fReplicate(), self.fTrafFile(),
+                self.fSesFile(), self.fSave(), self.fBeep(), self.fPayload(), self.fWaf(), self.fCleanup(),
+                self.fDependencies(), self.fGpage(), self.fTSTF(), self.fExact(), self.fMobile(), self.fRank(),
+                self.fPurge(), self.fSmart()
+            )])
+
         except:
             inject = "select target :)"
         finally:

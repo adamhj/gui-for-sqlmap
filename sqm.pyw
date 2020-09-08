@@ -13,6 +13,44 @@ from urlparse import urlparse
 import tkFont, tkFileDialog
 
 
+# ScrolledText Widget modified from python 3 version
+class ScrolledText(object):
+    def __init__(self, master=None, **kw):
+        self.frame = Frame(master)
+        self.vbar = Scrollbar(self.frame)
+        self.vbar.pack(side=RIGHT, fill=Y)
+
+        kw.update({'yscrollcommand': self.vbar.set})
+        self.text_widget = Text(self.frame, **kw)
+        self.text_widget.pack(side=LEFT, fill=BOTH, expand=True)
+        self.vbar['command'] = self.text_widget.yview
+
+        # Copy geometry methods of self.frame without overriding Text
+        # methods -- hack!
+        text_meths = set(vars(Text).keys())
+        for m in text_meths:
+            setattr(self, m, getattr(self.text_widget, m))
+
+        methods = set(vars(Pack).keys()) | set(vars(Grid).keys()) | set(vars(Place).keys())
+        methods = methods.difference(text_meths)
+
+        for m in methods:
+            if m[0] != '_' and m != 'config' and m != 'configure':
+                setattr(self, m, getattr(self.frame, m))
+
+    def __str__(self):
+        return str(self.frame)
+
+    @property
+    def text(self):
+        return self.get("1.0", END)
+
+    @text.setter
+    def text(self, val):
+        self.delete("1.0", END)
+        self.insert("1.0", val)
+
+
 class app(Frame):
     def __init__(self, mw):
         Frame.__init__(self, mw)
@@ -214,9 +252,9 @@ class app(Frame):
         queryLF.columnconfigure(0, weight=1)
         queryLF.rowconfigure(0, weight=1)
         panedUrl.add(queryLF)
-        self.sql_var = StringVar()
-        self.sqlEdit = ttk.Entry(queryLF)
-        self.sqlEdit.config(text="", textvariable=self.sql_var)
+        # self.sql_var = StringVar()
+        self.sqlEdit = ScrolledText(queryLF, height=6)
+        # self.sqlEdit.config(text="", textvariable=self.sql_var)
         self.sqlEdit.grid(sticky='we')
         self.sqlEdit.columnconfigure(0, weight=1)
         panedUrl.grid(row=0, column=0, sticky='nwe', rowspan=2)
@@ -3090,15 +3128,15 @@ class app(Frame):
         except:
             inject = "select target :)"
         finally:
-            self.sql_var.set(inject)
+            self.sqlEdit.text = inject
 
     # GOGO!!!
     def injectIT(self, *args):
         if (os.name == "posix"):
-            # cmd = "YourFavoriteTerminal -h -e python sqlmap.py %s" % (self.sqlEdit.get())
-            cmd = "sakura -h -e python2 sqlmap.py %s" % (self.sqlEdit.get())
+            # cmd = "YourFavoriteTerminal -h -e python sqlmap.py %s" % (self.sqlEdit.text)
+            cmd = "sakura -h -e python2 sqlmap.py %s" % (self.sqlEdit.text)
         else:
-            cmd = "start cmd /k sqlmap.py %s" % (self.sqlEdit.get())
+            cmd = "start cmd /k sqlmap.py %s" % (self.sqlEdit.text)
         # Write last target [last 50 test]
 
         mode = os.O_TRUNC | os.O_WRONLY
